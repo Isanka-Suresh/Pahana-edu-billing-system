@@ -81,7 +81,6 @@ public class UserDAO {
         return false;
     }
 
-
     public boolean updateUser(User user) {
         String sql = "UPDATE users SET full_name=?, email=?, role=? WHERE user_id=?";
 
@@ -101,7 +100,6 @@ public class UserDAO {
         }
     }
 
-
     public boolean changePassword(int userId, String newPassword) {
         String sql = "UPDATE users SET password_hash=? WHERE user_id=?";
 
@@ -119,7 +117,6 @@ public class UserDAO {
         }
     }
 
-
     public boolean deleteUser(int userId) {
         String sql = "DELETE FROM users WHERE user_id=?";
 
@@ -135,7 +132,6 @@ public class UserDAO {
             return false;
         }
     }
-
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
