@@ -1,34 +1,53 @@
 package com.pahanaEdu.dao;
 
+import com.pahanaEdu.model.UserModel;
+import com.pahanaEdu.util.DatabaseConnection;
+
 import java.sql.*;
 
 public class UserDAO {
-    private final String jdbcURL = "jdbc:mysql://localhost:3306/pahana_db?useSSL=false&serverTimezone=UTC";
-    private final String jdbcUser = "root";
-    private final String jdbcPass = "2002I$@n";
 
-    // Load the MySQL JDBC driver
-    static {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
+    public boolean validate(String username, String password) {
+        String sql = "SELECT password_hash FROM users WHERE username = ? AND password_hash = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, username);
+            stmt.setString(2, password); // Direct password comparison
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next(); // If a row is returned, credentials are valid
+            }
+        } catch (SQLException e) {
+            System.err.println("Database error during login for user: " + username);
             e.printStackTrace();
-            throw new RuntimeException("Failed to load MySQL JDBC driver", e);
+            return false;
         }
     }
 
-    public boolean validate(String username, String password) {
-        boolean status = false;
-        String sql = "SELECT * FROM users WHERE username=? AND password_hash=MD5(?)";
-        try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
+    public UserModel getUserByUsername(String username) {
+        String sql = "SELECT * FROM users WHERE username=?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
-            stmt.setString(2, password);
-            ResultSet rs = stmt.executeQuery();
-            status = rs.next();
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    UserModel user = new UserModel();
+                    user.setId(rs.getInt("id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setFullName(rs.getString("full_name"));
+                    user.setEmail(rs.getString("email"));
+                    user.setRole(rs.getString("role"));
+                    return user;
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return status;
+
+        return null;
     }
 }
