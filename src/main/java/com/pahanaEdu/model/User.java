@@ -1,13 +1,13 @@
 package com.pahanaEdu.model;
 
-public class UserModel {
+public class User {
     private int id;
     private String username;
     private String fullName;
     private String email;
     private String role;
 
-    public UserModel(int id, String username, String fullName, String email, String role) {
+    public User(int id, String username, String fullName, String email, String role) {
         this.id = id;
         this.username = username;
         this.fullName = fullName;
@@ -15,14 +15,14 @@ public class UserModel {
         this.role = role;
     }
 
-    public UserModel(String username, String fullName, String email, String role) {
+    public User(String username, String fullName, String email, String role) {
         this.username = username;
         this.fullName = fullName;
         this.email = email;
         this.role = role;
     }
 
-    public UserModel() {
+    public User() {
     }
 
     public String getRole() {
