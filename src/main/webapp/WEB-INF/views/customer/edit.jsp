@@ -153,12 +153,12 @@
                             <textarea class="form-control" id="address" name="address" rows="3">${customer.address}</textarea>
                         </div>
                         <div class="form-group">
-                            <label for="email">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="email" name="email" value="${customer.email}" required>
-                        </div>
-                        <div class="form-group">
                             <label for="phone">Phone Number</label>
                             <input type="text" class="form-control" id="phone" name="phone" value="${customer.phone}">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="email" name="email" value="${customer.email}" required>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">

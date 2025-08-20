@@ -15,13 +15,7 @@ import java.util.Date;
  */
 public class BillPDFGenerator {
 
-    /**
-     * Generate a PDF bill for an order
-     * 
-     * @param order The order to generate a bill for
-     * @param outputStream The output stream to write the PDF to
-     * @throws Exception If an error occurs during PDF generation
-     */
+
     public static void generateBill(Order order, OutputStream outputStream) throws Exception {
         Document document = new Document(PageSize.A4, 50, 50, 50, 50);
         PdfWriter writer = PdfWriter.getInstance(document, outputStream);

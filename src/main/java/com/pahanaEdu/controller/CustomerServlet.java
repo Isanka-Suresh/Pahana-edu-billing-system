@@ -93,6 +93,7 @@ public class CustomerServlet extends HttpServlet {
         String fullName = request.getParameter("fullName");
         String address = request.getParameter("address");
         String phone = request.getParameter("phone");
+        String email = request.getParameter("email");
         String unitsStr = request.getParameter("unitsConsumed");
         
         // Validate input
@@ -104,21 +105,21 @@ public class CustomerServlet extends HttpServlet {
         }
         
         // Parse units consumed
-        int unitsConsumed = 0;
-        try {
-            if (unitsStr != null && !unitsStr.trim().isEmpty()) {
-                unitsConsumed = Integer.parseInt(unitsStr);
-                if (unitsConsumed < 0) {
-                    request.setAttribute("errorMessage", "Units consumed must be a non-negative number");
-                    request.getRequestDispatcher("/WEB-INF/views/customer/add.jsp").forward(request, response);
-                    return;
-                }
-            }
-        } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "Units consumed must be a valid number");
-            request.getRequestDispatcher("/WEB-INF/views/customer/add.jsp").forward(request, response);
-            return;
-        }
+//        int unitsConsumed = 0;
+//        try {
+//            if (unitsStr != null && !unitsStr.trim().isEmpty()) {
+//                unitsConsumed = Integer.parseInt(unitsStr);
+//                if (unitsConsumed < 0) {
+//                    request.setAttribute("errorMessage", "Units consumed must be a non-negative number");
+//                    request.getRequestDispatcher("/WEB-INF/views/customer/add.jsp").forward(request, response);
+//                    return;
+//                }
+//            }
+//        } catch (NumberFormatException e) {
+//            request.setAttribute("errorMessage", "Units consumed must be a valid number");
+//            request.getRequestDispatcher("/WEB-INF/views/customer/add.jsp").forward(request, response);
+//            return;
+//        }
         
         // Create customer object
         Customer customer = new Customer();
@@ -126,6 +127,7 @@ public class CustomerServlet extends HttpServlet {
         customer.setFullName(fullName);
         customer.setAddress(address != null ? address : "");
         customer.setPhone(phone != null ? phone : "");
+        customer.setEmail(email != null ? email : "");
         
         // Add customer
         if (customerService.addCustomer(customer)) {
@@ -144,7 +146,7 @@ public class CustomerServlet extends HttpServlet {
         String fullName = request.getParameter("fullName");
         String address = request.getParameter("address");
         String phone = request.getParameter("phone");
-        String unitsStr = request.getParameter("unitsConsumed");
+        String email = request.getParameter("email");
         String customerIdStr = request.getParameter("customerId");
         
         // Validate input
@@ -157,25 +159,17 @@ public class CustomerServlet extends HttpServlet {
         
         // Parse customer ID and units consumed
         int customerId;
-        int unitsConsumed = 0;
         try {
             customerId = Integer.parseInt(customerIdStr);
-            
-            if (unitsStr != null && !unitsStr.trim().isEmpty()) {
-                unitsConsumed = Integer.parseInt(unitsStr);
-                if (unitsConsumed < 0) {
-                    request.setAttribute("errorMessage", "Units consumed must be a non-negative number");
-                    Customer customer = customerService.getCustomerByAccountNumber(accountNumber);
-                    request.setAttribute("customer", customer);
-                    request.getRequestDispatcher("/WEB-INF/views/customer/edit.jsp").forward(request, response);
-                    return;
-                }
-            }
+            request.setAttribute("errorMessage", "Units consumed must be a non-negative number");
+            Customer customer = customerService.getCustomerByAccountNumber(accountNumber);
+            request.setAttribute("customer", customer);
+            request.getRequestDispatcher("/WEB-INF/views/customer/edit.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/customers");
             return;
         }
-        
+
         // Create customer object
         Customer customer = new Customer();
         customer.setCustomerId(customerId);

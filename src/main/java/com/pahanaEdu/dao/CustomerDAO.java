@@ -18,9 +18,9 @@ public class CustomerDAO {
             stmt.setString(1, customer.getAccountNumber());
             stmt.setString(2, customer.getFullName());
             stmt.setString(3, customer.getAddress());
-            stmt.setString(4, customer.getPhone());
-            stmt.setString(5, customer.getEmail());
-            
+            stmt.setString(4, customer.getEmail());
+            stmt.setString(5, customer.getPhone());
+
             int affectedRows = stmt.executeUpdate();
             
             return affectedRows > 0;
@@ -31,7 +31,7 @@ public class CustomerDAO {
     }
 
     public boolean updateCustomer(Customer customer) {
-        String sql = "UPDATE customers SET name=?, address=?, phone=?, email=? WHERE account_no=?";
+        String sql = "UPDATE customers SET full_name=?, address=?, phone=?, email=? WHERE account_number=?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -39,8 +39,8 @@ public class CustomerDAO {
             stmt.setString(1, customer.getFullName());
             stmt.setString(2, customer.getAddress());
             stmt.setString(3, customer.getPhone());
+            stmt.setString(4, customer.getEmail());
             stmt.setString(5, customer.getAccountNumber());
-            stmt.setString(6, customer.getEmail());
             
             int affectedRows = stmt.executeUpdate();
             
@@ -108,6 +108,7 @@ public class CustomerDAO {
                 customer.setFullName(rs.getString("full_name"));
                 customer.setAddress(rs.getString("address"));
                 customer.setPhone(rs.getString("phone"));
+                customer.setEmail(rs.getString("email"));
                 customers.add(customer);
             }
         } catch (SQLException e) {

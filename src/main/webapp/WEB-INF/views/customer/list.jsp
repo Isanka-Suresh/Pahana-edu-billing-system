@@ -153,8 +153,8 @@
                                 <th>Account Number</th>
                                 <th>Name</th>
                                 <th>Address</th>
-                                <th>Email</th>
                                 <th>Phone</th>
+                                <th>Email</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -164,8 +164,8 @@
                                     <td>${customer.accountNumber}</td>
                                     <td>${customer.fullName}</td>
                                     <td>${customer.address}</td>
-                                    <td>${customer.email}</td>
                                     <td>${customer.phone}</td>
+                                    <td>${customer.email}</td>
                                     <td class="action-buttons">
                                         <a href="${pageContext.request.contextPath}/customers/edit?accountNumber=${customer.accountNumber}" class="btn btn-sm btn-info">
                                             <i class="fas fa-edit"></i> Edit
