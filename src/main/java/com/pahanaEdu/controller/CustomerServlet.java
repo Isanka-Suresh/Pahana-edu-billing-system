@@ -158,17 +158,7 @@ public class CustomerServlet extends HttpServlet {
         }
         
         // Parse customer ID and units consumed
-        int customerId;
-        try {
-            customerId = Integer.parseInt(customerIdStr);
-            request.setAttribute("errorMessage", "Units consumed must be a non-negative number");
-            Customer customer = customerService.getCustomerByAccountNumber(accountNumber);
-            request.setAttribute("customer", customer);
-            request.getRequestDispatcher("/WEB-INF/views/customer/edit.jsp").forward(request, response);
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/customers");
-            return;
-        }
+        int customerId = Integer.parseInt(customerIdStr);
 
         // Create customer object
         Customer customer = new Customer();
@@ -177,6 +167,7 @@ public class CustomerServlet extends HttpServlet {
         customer.setFullName(fullName);
         customer.setAddress(address != null ? address : "");
         customer.setPhone(phone != null ? phone : "");
+        customer.setEmail(email != null ? email : "");
         
         // Update customer
         if (customerService.updateCustomer(customer)) {
