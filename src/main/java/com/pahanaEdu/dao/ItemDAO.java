@@ -10,14 +10,16 @@ import java.util.List;
 public class ItemDAO {
 
     public boolean insertItem(Item item) {
-        String sql = "INSERT INTO items (name, price, description) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO items (item_code,item_name,description,unit_price,stock_quantity) VALUES (?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
-            stmt.setString(1, item.getItemName());
-            stmt.setDouble(2, item.getUnitPrice());
+            stmt.setString(1, item.getItemCode());
+            stmt.setString(2, item.getItemName());
             stmt.setString(3, item.getDescription());
+            stmt.setDouble(4, item.getUnitPrice());
+            stmt.setInt(5, item.getStockQuantity());
             
             int affectedRows = stmt.executeUpdate();
             
@@ -37,15 +39,17 @@ public class ItemDAO {
     }
     
     public boolean updateItem(Item item) {
-        String sql = "UPDATE items SET name=?, price=?, description=? WHERE item_id=?";
+        String sql = "UPDATE items SET item_name=?,item_code=?,description=?, unit_price=?, stock_quantity=?  WHERE item_id=?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, item.getItemName());
-            stmt.setDouble(2, item.getUnitPrice());
+            stmt.setString(2, item.getItemCode());
             stmt.setString(3, item.getDescription());
-            stmt.setInt(4, item.getItemId());
+            stmt.setDouble(4, item.getUnitPrice());
+            stmt.setInt(5, item.getStockQuantity());
+            stmt.setInt(6, item.getItemId());
             
             int affectedRows = stmt.executeUpdate();
             
@@ -85,9 +89,11 @@ public class ItemDAO {
                 if (rs.next()) {
                     Item item = new Item();
                     item.setItemId(rs.getInt("item_id"));
-                    item.setItemName(rs.getString("name"));
-                    item.setUnitPrice(rs.getDouble("price"));
+                    item.setItemCode(rs.getString("item_code"));
+                    item.setItemName(rs.getString("item_name"));
+                    item.setUnitPrice(rs.getDouble("unit_price"));
                     item.setDescription(rs.getString("description"));
+                    item.setStockQuantity(rs.getInt("stock_quantity"));
                     return item;
                 }
             }
@@ -111,8 +117,8 @@ public class ItemDAO {
                     Item item = new Item();
                     item.setItemId(rs.getInt("item_id"));
                     item.setItemCode(rs.getString("item_code"));
-                    item.setItemName(rs.getString("name"));
-                    item.setUnitPrice(rs.getDouble("price"));
+                    item.setItemName(rs.getString("item_name"));
+                    item.setUnitPrice(rs.getDouble("unit_price"));
                     item.setDescription(rs.getString("description"));
                     item.setStockQuantity(rs.getInt("stock_quantity"));
                     return item;
@@ -136,9 +142,11 @@ public class ItemDAO {
             while (rs.next()) {
                 Item item = new Item();
                 item.setItemId(rs.getInt("item_id"));
+                item.setItemCode(rs.getString("item_code"));
                 item.setItemName(rs.getString("item_name"));
                 item.setUnitPrice(rs.getDouble("unit_price"));
                 item.setDescription(rs.getString("description"));
+                item.setStockQuantity(rs.getInt("stock_quantity"));
                 items.add(item);
             }
         } catch (SQLException e) {
@@ -161,9 +169,10 @@ public class ItemDAO {
                 while (rs.next()) {
                     Item item = new Item();
                     item.setItemId(rs.getInt("item_id"));
-                    item.setItemName(rs.getString("name"));
-                    item.setUnitPrice(rs.getDouble("price"));
+                    item.setItemName(rs.getString("item_name"));
+                    item.setUnitPrice(rs.getDouble("unit_price"));
                     item.setDescription(rs.getString("description"));
+                    item.setStockQuantity(rs.getInt("stock_quantity"));
                     items.add(item);
                 }
             }

@@ -11,9 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Servlet for handling item management
- */
 @WebServlet("/items/*")
 public class ItemServlet extends HttpServlet {
     private ItemService itemService;
@@ -89,10 +86,10 @@ public class ItemServlet extends HttpServlet {
     
     private void addItem(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String itemCode = request.getParameter("itemCode");
-        String name = request.getParameter("name");
+        String name = request.getParameter("itemName");
         String description = request.getParameter("description");
-        String priceStr = request.getParameter("price");
-        String quantityStr = request.getParameter("quantity");
+        String priceStr = request.getParameter("unitPrice");
+        String quantityStr = request.getParameter("stockQuantity");
         
         // Validate input
         if (itemCode == null || itemCode.trim().isEmpty() ||
@@ -151,10 +148,10 @@ public class ItemServlet extends HttpServlet {
     
     private void updateItem(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String itemCode = request.getParameter("itemCode");
-        String name = request.getParameter("name");
+        String name = request.getParameter("itemName");
         String description = request.getParameter("description");
-        String priceStr = request.getParameter("price");
-        String quantityStr = request.getParameter("quantity");
+        String priceStr = request.getParameter("unitPrice");
+        String quantityStr = request.getParameter("stockQuantity");
         String itemIdStr = request.getParameter("itemId");
         
         // Validate input
