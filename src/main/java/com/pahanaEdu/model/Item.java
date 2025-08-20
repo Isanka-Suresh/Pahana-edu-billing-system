@@ -9,7 +9,6 @@ public class Item {
     private String itemName;
     private String description;
     private double unitPrice;
-    private String category;
     private int stockQuantity;
     
     // Default constructor
@@ -23,7 +22,6 @@ public class Item {
         this.itemName = itemName;
         this.description = description;
         this.unitPrice = unitPrice;
-        this.category = category;
         this.stockQuantity = stockQuantity;
     }
     
@@ -33,7 +31,6 @@ public class Item {
         this.itemName = itemName;
         this.description = description;
         this.unitPrice = unitPrice;
-        this.category = category;
         this.stockQuantity = stockQuantity;
     }
     
@@ -78,14 +75,6 @@ public class Item {
         this.unitPrice = unitPrice;
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
     public int getStockQuantity() {
         return stockQuantity;
     }
@@ -102,7 +91,6 @@ public class Item {
                 ", itemName='" + itemName + '\'' +
                 ", description='" + description + '\'' +
                 ", unitPrice=" + unitPrice +
-                ", category='" + category + '\'' +
                 ", stockQuantity=" + stockQuantity +
                 '}';
     }
