@@ -212,6 +212,7 @@ public class OrderServlet extends HttpServlet {
             
             // Update order with form data
             sessionOrder.setCustomerId(customerId);
+            sessionOrder.setCustomer(customer);
             // Notes field not available in Order model
             // sessionOrder.setNotes(notes != null ? notes : "");
             
@@ -294,6 +295,21 @@ public class OrderServlet extends HttpServlet {
             sessionOrder.setPaymentStatus("pending");
         }
         
+        // Preserve customer selection if provided
+        String customerIdStr = request.getParameter("customerId");
+        if (customerIdStr != null && !customerIdStr.trim().isEmpty()) {
+            try {
+                int customerId = Integer.parseInt(customerIdStr);
+                Customer customer = customerService.getCustomer(customerId);
+                if (customer != null) {
+                    sessionOrder.setCustomerId(customerId);
+                    sessionOrder.setCustomer(customer);
+                }
+            } catch (NumberFormatException e) {
+                // Invalid customer ID, ignore
+            }
+        }
+        
         String itemIdStr = request.getParameter("itemId");
         String quantityStr = request.getParameter("quantity");
         
@@ -345,7 +361,7 @@ public class OrderServlet extends HttpServlet {
             // Check if item is already in order
             boolean itemExists = false;
             for (OrderItem orderItem : sessionOrder.getOrderItems()) {
-                if (orderItem.getItemId() == itemId) {
+                if (orderItem.getItem() != null && orderItem.getItem().getItemId() == itemId) {
                     // Update quantity
                     orderItem.setQuantity(orderItem.getQuantity() + quantity);
                     orderItem.setLineTotal(orderItem.getQuantity() * item.getUnitPrice());
@@ -412,7 +428,7 @@ public class OrderServlet extends HttpServlet {
                 // Remove item from order
                 List<OrderItem> updatedItems = new ArrayList<>();
                 for (OrderItem orderItem : sessionOrder.getOrderItems()) {
-                    if (orderItem.getItemId() != itemId) {
+                    if (orderItem.getItem() == null || orderItem.getItem().getItemId() != itemId) {
                         updatedItems.add(orderItem);
                     }
                 }
@@ -501,47 +517,9 @@ public class OrderServlet extends HttpServlet {
             // No search criteria, get all orders
             orders = orderService.getAllOrders();
         } else {
-            // Search by criteria
-            // Using getAllOrders as searchOrders method is not defined
-            orders = orderService.getAllOrders();
-            // Filter orders based on search criteria in servlet
-            if (searchTerm != null && !searchTerm.trim().isEmpty() || 
-                status != null && !status.trim().isEmpty() || 
-                paymentStatus != null && !paymentStatus.trim().isEmpty()) {
-                List<Order> filteredOrders = new ArrayList<>();
-                for (Order order : orders) {
-                    boolean matches = true;
-                    
-                    // Filter by search term (order number or customer name)
-                    if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-                        boolean termMatches = false;
-                        if (order.getOrderNumber() != null && 
-                            order.getOrderNumber().toLowerCase().contains(searchTerm.toLowerCase())) {
-                            termMatches = true;
-                        } else if (order.getCustomer() != null && 
-                                  order.getCustomer().getFullName() != null && 
-                                  order.getCustomer().getFullName().toLowerCase().contains(searchTerm.toLowerCase())) {
-                            termMatches = true;
-                        }
-                        matches = matches && termMatches;
-                    }
-                    
-                    // Filter by status
-                    if (status != null && !status.trim().isEmpty()) {
-                        matches = matches && status.equals(order.getOrderStatus());
-                    }
-                    
-                    // Filter by payment status
-                    if (paymentStatus != null && !paymentStatus.trim().isEmpty()) {
-                        matches = matches && paymentStatus.equals(order.getPaymentStatus());
-                    }
-                    
-                    if (matches) {
-                        filteredOrders.add(order);
-                    }
-                }
-                orders = filteredOrders;
-            }
+            // Search by criteria using the searchOrders method
+            orders = orderService.searchOrders(searchTerm, status, paymentStatus);
+            // No need for additional filtering as it's handled in the service layer
         }
         
         request.setAttribute("orders", orders);

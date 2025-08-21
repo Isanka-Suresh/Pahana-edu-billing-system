@@ -158,7 +158,7 @@ public class ItemDAO {
 
     public List<Item> searchItemsByName(String name) {
         List<Item> items = new ArrayList<>();
-        String sql = "SELECT * FROM items WHERE name LIKE ?";
+        String sql = "SELECT * FROM items WHERE item_name LIKE ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
