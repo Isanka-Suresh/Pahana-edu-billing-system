@@ -188,9 +188,9 @@ public class OrderDAO {
     }
 
     public Order getOrderById(int orderId) {
-        String sql = "SELECT o.*, c.account_no, c.name, c.address, c.phone " +
+        String sql = "SELECT o.*, c.account_number, c.full_name, c.address, c.phone " +
                      "FROM orders o " +
-                     "LEFT JOIN customers c ON o.customer_id = c.id " +
+                     "LEFT JOIN customers c ON o.customer_id = c.customer_id " +
                      "WHERE o.order_id=?";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -213,7 +213,7 @@ public class OrderDAO {
                     Customer customer = new Customer();
                     customer.setCustomerId(rs.getInt("customer_id"));
                     customer.setAccountNumber(rs.getString("account_number"));
-                    customer.setFullName(rs.getString("name"));
+                    customer.setFullName(rs.getString("full_name"));
                     customer.setAddress(rs.getString("address"));
                     customer.setPhone(rs.getString("phone"));
                     order.setCustomer(customer);
@@ -255,8 +255,8 @@ public class OrderDAO {
                 // Set customer information
                 Customer customer = new Customer();
                 customer.setCustomerId(rs.getInt("customer_id"));
-                customer.setAccountNumber(rs.getString("account_no"));
-                customer.setFullName(rs.getString("name"));
+                customer.setAccountNumber(rs.getString("account_number"));
+                customer.setFullName(rs.getString("full_name"));
                 customer.setAddress(rs.getString("address"));
                 customer.setPhone(rs.getString("phone"));
                 order.setCustomer(customer);
@@ -350,9 +350,9 @@ public class OrderDAO {
 
     public List<Order> getOrdersByStatus(String status) {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT o.*, c.account_no, c.name, c.address, c.phone " +
+        String sql = "SELECT o.*, c.account_number, c.full_name, c.address, c.phone " +
                     "FROM orders o " +
-                    "LEFT JOIN customers c ON o.customer_id = c.id " +
+                    "LEFT JOIN customers c ON o.customer_id = c.customer_id " +
                     "WHERE o.order_status=?";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -375,7 +375,7 @@ public class OrderDAO {
                     Customer customer = new Customer();
                     customer.setCustomerId(rs.getInt("customer_id"));
                     customer.setAccountNumber(rs.getString("account_number"));
-                    customer.setFullName(rs.getString("name"));
+                    customer.setFullName(rs.getString("full_name"));
                     customer.setAddress(rs.getString("address"));
                     customer.setPhone(rs.getString("phone"));
                     order.setCustomer(customer);

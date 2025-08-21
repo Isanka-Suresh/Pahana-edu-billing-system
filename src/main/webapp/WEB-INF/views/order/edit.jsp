@@ -163,7 +163,7 @@
                                     <select class="form-control" id="itemId" name="itemId" required>
                                         <option value="">-- Select Item --</option>
                                         <c:forEach var="item" items="${items}">
-                                            <option value="${item.itemId}">${item.name} - Rs. ${item.price} (${item.quantity} in stock)</option>
+                                            <option value="${item.itemId}">${item.itemName} - Rs. ${item.unitPrice} (${item.stockQuantity} in stock)</option>
                                         </c:forEach>
                                     </select>
                                 </div>
@@ -247,12 +247,12 @@
                                         <tbody>
                                             <c:forEach var="item" items="${order.orderItems}">
                                                 <tr>
-                                                    <td>${item.itemName}</td>
-                                                    <td><fmt:formatNumber value="${item.price}" type="currency" currencySymbol="Rs. "/></td>
+                                                    <td>${item.item.itemName}</td>
+                                                    <td><fmt:formatNumber value="${item.unitPrice}" type="currency" currencySymbol="Rs. "/></td>
                                                     <td>${item.quantity}</td>
-                                                    <td><fmt:formatNumber value="${item.subtotal}" type="currency" currencySymbol="Rs. "/></td>
+                                                    <td><fmt:formatNumber value="${item.lineTotal}" type="currency" currencySymbol="Rs. "/></td>
                                                     <td>
-                                                        <a href="${pageContext.request.contextPath}/orders/remove-item?itemId=${item.itemId}&orderId=${order.orderId}" class="btn btn-sm btn-danger">
+                                                        <a href="${pageContext.request.contextPath}/orders/remove-item?itemId=${item.item.itemId}&orderId=${order.orderId}" class="btn btn-sm btn-danger">
                                                             <i class="fas fa-trash"></i> Remove
                                                         </a>
                                                     </td>
@@ -262,7 +262,7 @@
                                         <tfoot>
                                             <tr>
                                                 <td colspan="3" class="text-right order-total">Total:</td>
-                                                <td class="order-total"><fmt:formatNumber value="${order.total}" type="currency" currencySymbol="Rs. "/></td>
+                                                <td class="order-total"><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="Rs. "/></td>
                                                 <td></td>
                                             </tr>
                                         </tfoot>

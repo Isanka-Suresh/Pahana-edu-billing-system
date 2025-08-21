@@ -151,15 +151,36 @@
                     </div>
                 </c:if>
                 
+                <!-- Customer Selection Form - Top Priority -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="form-container shadow-sm p-3 bg-white rounded">
+                            <h4 class="text-primary mb-3"><i class="fas fa-user"></i> Select Customer</h4>
+                            <div class="form-group">
+                                <label for="customerId">Customer <span class="text-danger">*</span></label>
+                                <select class="form-control custom-select" id="customerId" name="customerId" required>
+                                    <option value="">-- Select Customer --</option>
+                                    <c:forEach var="customer" items="${customers}">
+                                        <option value="${customer.customerId}">
+                                            ${customer.fullName} - (${customer.accountNumber})
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-md-6">
                         <!-- Add Item Form -->
-                        <div class="form-container">
-                            <h4><i class="fas fa-cart-plus"></i> Add Items to Order</h4>
+                        <div class="form-container shadow-sm p-3 mb-4 bg-white rounded">
+                            <h4 class="text-primary mb-3"><i class="fas fa-cart-plus"></i> Add Items to Order</h4>
                             <form action="${pageContext.request.contextPath}/orders/add-item" method="post">
+                                <input type="hidden" id="addItemCustomerId" name="customerId" value="${order.customerId}">
                                 <div class="form-group">
                                     <label for="itemId">Select Item <span class="text-danger">*</span></label>
-                                    <select class="form-control" id="itemId" name="itemId" required>
+                                    <select class="form-control custom-select" id="itemId" name="itemId" required>
                                         <option value="">-- Select Item --</option>
                                         <c:forEach var="item" items="${items}">
                                             <option value="${item.itemId}">${item.itemName} - Rs. ${item.unitPrice} (${item.stockQuantity} in stock)</option>
@@ -170,34 +191,27 @@
                                     <label for="quantity">Quantity <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary btn-block">
                                     <i class="fas fa-plus"></i> Add Item
                                 </button>
                             </form>
                         </div>
                         
                         <!-- Order Form -->
-                        <div class="form-container">
-                            <h4><i class="fas fa-file-invoice"></i> Order Details</h4>
+                        <div class="form-container shadow-sm p-3 mb-4 bg-white rounded">
+                            <h4 class="text-primary mb-3"><i class="fas fa-file-invoice"></i> Finalize Order</h4>
                             <form action="${pageContext.request.contextPath}/orders" method="post">
-                                <div class="form-group">
-                                    <label for="customerId">Customer <span class="text-danger">*</span></label>
-                                    <select class="form-control" id="customerId" name="customerId" required>
-                                        <option value="">-- Select Customer --</option>
-                                        <c:forEach var="customer" items="${customers}">
-                                            <option value="${customer.customerId}" ${order.customerId == customer.customerId ? 'selected' : ''}>
-                                                ${customer.fullName} (${customer.accountNumber})
-                                            </option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
+                                <input type="hidden" id="selectedCustomerId" name="customerId" value="${order.customerId}">
                                 <div class="form-group">
                                     <label for="notes">Notes</label>
-                                    <textarea class="form-control" id="notes" name="notes" rows="3">${order.notes}</textarea>
+                                    <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter any special instructions or notes..."></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-success" ${empty order.orderItems ? 'disabled' : ''}>
-                                    <i class="fas fa-save"></i> Create Order
+                                <button type="submit" class="btn btn-success btn-block" ${empty order.orderItems ? 'disabled' : ''}>
+                                    <i class="fas fa-check"></i> Create Order
                                 </button>
+                                <c:if test="${empty order.orderItems}">
+                                    <small class="form-text text-muted text-center mt-2">Please add at least one item to create an order</small>
+                                </c:if>
                                 <a href="${pageContext.request.contextPath}/orders" class="btn btn-secondary">
                                     <i class="fas fa-times"></i> Cancel
                                 </a>
@@ -207,50 +221,53 @@
                     
                     <div class="col-md-6">
                         <!-- Order Items -->
-                        <div class="form-container">
-                            <h4><i class="fas fa-list"></i> Order Items</h4>
-                            <c:if test="${empty order.orderItems}">
-                                <div class="alert alert-info">
-                                    No items added to this order yet. Please add items using the form on the left.
-                                </div>
-                            </c:if>
-                            <c:if test="${not empty order.orderItems}">
-                                <div class="table-responsive order-items">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Item</th>
-                                                <th>Price</th>
-                                                <th>Quantity</th>
-                                                <th>Subtotal</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <c:forEach var="item" items="${order.orderItems}">
+                        <div class="form-container shadow-sm p-3 mb-4 bg-white rounded">
+                            <h4 class="text-primary mb-3"><i class="fas fa-list"></i> Order Items</h4>
+                            <c:choose>
+                                <c:when test="${empty order.orderItems}">
+                                    <div class="alert alert-info text-center">
+                                        <i class="fas fa-info-circle"></i> No items added to this order yet.
+                                        <p class="mt-2 mb-0">Use the form on the left to add items.</p>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead class="thead-light">
                                                 <tr>
-                                                    <td>${item.itemName}</td>
-                                                    <td><fmt:formatNumber value="${item.price}" type="currency" currencySymbol="Rs. "/></td>
-                                                    <td>${item.quantity}</td>
-                                                    <td><fmt:formatNumber value="${item.subtotal}" type="currency" currencySymbol="Rs. "/></td>
-                                                    <td>
-                                                        <a href="${pageContext.request.contextPath}/orders/remove-item?itemId=${item.itemId}" class="btn btn-sm btn-danger">
-                                                            <i class="fas fa-trash"></i> Remove
-                                                        </a>
-                                                    </td>
+                                                    <th>Item</th>
+                                                    <th>Price</th>
+                                                    <th>Qty</th>
+                                                    <th>Subtotal</th>
+                                                    <th>Action</th>
                                                 </tr>
-                                            </c:forEach>
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td colspan="3" class="text-right order-total">Total:</td>
-                                                <td class="order-total"><fmt:formatNumber value="${order.total}" type="currency" currencySymbol="Rs. "/></td>
-                                                <td></td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </c:if>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach var="item" items="${order.orderItems}">
+                                                    <tr>
+                                                        <td><strong>${item.item.itemName}</strong></td>
+                                                        <td><fmt:formatNumber value="${item.unitPrice}" type="currency" currencySymbol="Rs. "/></td>
+                                                        <td>${item.quantity}</td>
+                                                        <td><fmt:formatNumber value="${item.lineTotal}" type="currency" currencySymbol="Rs. "/></td>
+                                                        <td>
+                                                            <a href="${pageContext.request.contextPath}/orders/remove-item?itemId=${item.item.itemId}" class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-trash"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="3" class="text-right font-weight-bold">Total:</td>
+                                                    <td class="font-weight-bold"><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="Rs. "/></td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                 </div>
@@ -261,5 +278,39 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Sync customer selection between dropdown and hidden fields
+        $(document).ready(function() {
+            $('#customerId').change(function() {
+                var selectedCustomerId = $(this).val();
+                $('#selectedCustomerId').val(selectedCustomerId);
+                $('#addItemCustomerId').val(selectedCustomerId);
+                
+                // Enable/disable create order button based on customer selection and items
+                var hasItems = <c:out value="${not empty order.orderItems}" default="false"/>;
+                var hasCustomer = selectedCustomerId !== '';
+                
+                var createOrderBtn = $('button[type="submit"]:contains("Create Order")');
+                if (hasItems && hasCustomer) {
+                    createOrderBtn.prop('disabled', false);
+                    createOrderBtn.removeClass('btn-secondary').addClass('btn-success');
+                } else {
+                    createOrderBtn.prop('disabled', true);
+                    createOrderBtn.removeClass('btn-success').addClass('btn-secondary');
+                }
+            });
+            
+            // Initialize on page load
+            $('#customerId').trigger('change');
+            
+            // Set initial customer selection if order has customer
+            var orderCustomerId = '${order.customerId}';
+            if (orderCustomerId && orderCustomerId !== '0') {
+                $('#customerId').val(orderCustomerId);
+                $('#customerId').trigger('change');
+            }
+        });
+    </script>
 </body>
 </html>

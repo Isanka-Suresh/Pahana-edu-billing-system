@@ -220,14 +220,14 @@
                         </thead>
                         <tbody>
                             <c:forEach var="order" items="${orders}">
-                                <tr class="status-${order.status}">
+                                <tr class="status-${order.orderStatus}">
                                     <td>${order.orderId}</td>
-                                    <td>${order.customerName}</td>
+                                    <td>${order.customer.fullName}</td>
                                     <td><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm" /></td>
-                                    <td><fmt:formatNumber value="${order.total}" type="currency" currencySymbol="Rs. "/></td>
+                                    <td><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="Rs. "/></td>
                                     <td>
-                                        <span class="badge badge-${order.status}">
-                                            ${order.status.substring(0, 1).toUpperCase()}${order.status.substring(1)}
+                                        <span class="badge badge-${order.orderStatus}">
+                                            ${order.orderStatus.substring(0, 1).toUpperCase()}${order.orderStatus.substring(1)}
                                         </span>
                                     </td>
                                     <td>
@@ -239,7 +239,7 @@
                                         <a href="${pageContext.request.contextPath}/orders/view?orderId=${order.orderId}" class="btn btn-sm btn-info">
                                             <i class="fas fa-eye"></i> View
                                         </a>
-                                        <c:if test="${order.status == 'pending'}">
+                                        <c:if test="${order.orderStatus == 'pending'}">
                                             <a href="${pageContext.request.contextPath}/orders/edit?orderId=${order.orderId}" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>

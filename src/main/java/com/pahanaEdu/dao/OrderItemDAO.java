@@ -107,7 +107,7 @@ public class OrderItemDAO {
     }
 
     public OrderItem getOrderItemById(int orderItemId) {
-        String sql = "SELECT oi.*, i.name, i.price, i.description FROM order_items oi " +
+        String sql = "SELECT oi.*, i.item_name, i.unit_price, i.description FROM order_items oi " +
                      "LEFT JOIN items i ON oi.item_id = i.item_id " +
                      "WHERE oi.order_item_id=?";
         
@@ -129,8 +129,8 @@ public class OrderItemDAO {
                     // Set item information
                     Item item = new Item();
                     item.setItemId(rs.getInt("item_id"));
-                    item.setItemName(rs.getString("name"));
-                    item.setUnitPrice(rs.getDouble("price"));
+                    item.setItemName(rs.getString("item_name"));
+                    item.setUnitPrice(rs.getDouble("unit_price"));
                     item.setDescription(rs.getString("description"));
                     orderItem.setItem(item);
                     
@@ -146,7 +146,7 @@ public class OrderItemDAO {
 
     public List<OrderItem> getOrderItemsByOrderId(int orderId) {
         List<OrderItem> orderItems = new ArrayList<>();
-        String sql = "SELECT oi.*, i.name, i.price, i.description FROM order_items oi " +
+        String sql = "SELECT oi.*, i.item_name, i.unit_price, i.description FROM order_items oi " +
                      "LEFT JOIN items i ON oi.item_id = i.item_id " +
                      "WHERE oi.order_id=?";
         
@@ -168,8 +168,8 @@ public class OrderItemDAO {
                     // Set item information
                     Item item = new Item();
                     item.setItemId(rs.getInt("item_id"));
-                    item.setItemName(rs.getString("name"));
-                    item.setUnitPrice(rs.getDouble("price"));
+                    item.setItemName(rs.getString("item_name"));
+                    item.setUnitPrice(rs.getDouble("unit_price"));
                     item.setDescription(rs.getString("description"));
                     orderItem.setItem(item);
                     

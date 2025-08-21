@@ -10,10 +10,8 @@ import com.pahanaEdu.model.OrderItem;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * Service class for order management
- */
 public class OrderService {
     private OrderDAO orderDAO;
     private OrderItemDAO orderItemDAO;
@@ -24,12 +22,7 @@ public class OrderService {
         this.orderItemDAO = new OrderItemDAO();
         this.itemDAO = new ItemDAO();
     }
-    
-    /**
-     * Create a new order
-     * @param order Order object to create
-     * @return true if successful, false otherwise
-     */
+
     public boolean createOrder(Order order) {
         if (!validateOrder(order)) {
             return false;
@@ -47,12 +40,12 @@ public class OrderService {
         
         // Set default status if not provided
         if (order.getOrderStatus() == null || order.getOrderStatus().trim().isEmpty()) {
-            order.setOrderStatus("Pending");
+            order.setOrderStatus("pending");
         }
         
         // Set default payment status if not provided
         if (order.getPaymentStatus() == null || order.getPaymentStatus().trim().isEmpty()) {
-            order.setPaymentStatus("Unpaid");
+            order.setPaymentStatus("pending");
         }
         
         // Calculate total amount
@@ -65,12 +58,7 @@ public class OrderService {
         
         return orderDAO.insertOrder(order);
     }
-    
-    /**
-     * Update an existing order
-     * @param order Order object to update
-     * @return true if successful, false otherwise
-     */
+
     public boolean updateOrder(Order order) {
         if (!validateOrder(order)) {
             return false;
@@ -82,13 +70,8 @@ public class OrderService {
             // Restore original stock quantities
             updateStockQuantities(originalOrder, false);
         }
-        
-        // Calculate total amount
         order.calculateTotal();
-        
-        // Update stock quantities for the updated order
         if (!updateStockQuantities(order, true)) {
-            // If stock update fails, restore original stock quantities
             if (originalOrder != null) {
                 updateStockQuantities(originalOrder, true);
             }
@@ -97,12 +80,7 @@ public class OrderService {
         
         return orderDAO.updateOrder(order);
     }
-    
-    /**
-     * Delete an order
-     * @param orderId ID of the order to delete
-     * @return true if successful, false otherwise
-     */
+
     public boolean deleteOrder(int orderId) {
         if (orderId <= 0) {
             return false;
@@ -117,12 +95,7 @@ public class OrderService {
         
         return orderDAO.deleteOrder(orderId);
     }
-    
-    /**
-     * Get an order by ID
-     * @param orderId ID to search for
-     * @return Order object if found, null otherwise
-     */
+
     public Order getOrderById(int orderId) {
         if (orderId <= 0) {
             return null;
@@ -131,11 +104,6 @@ public class OrderService {
         return orderDAO.getOrderById(orderId);
     }
 
-    /**
-     * Get orders by status
-     * @param orderStatus Status to filter by (e.g., "pending", "completed", "cancelled")
-     * @return List of orders with the specified status
-     */
     public List<Order> getOrdersByStatus(String orderStatus) {
         if (orderStatus == null || orderStatus.trim().isEmpty()) {
             return new ArrayList<>();
@@ -143,20 +111,11 @@ public class OrderService {
         
         return orderDAO.getOrdersByStatus(orderStatus);
     }
-    
-    /**
-     * Get all orders
-     * @return List of all orders
-     */
+
     public List<Order> getAllOrders() {
         return orderDAO.getAllOrders();
     }
-    
-    /**
-     * Get orders for a specific customer
-     * @param customerId ID of the customer
-     * @return List of orders for the customer
-     */
+
     public List<Order> getOrdersByCustomerId(int customerId) {
         if (customerId <= 0) {
             return null;
@@ -164,13 +123,7 @@ public class OrderService {
         
         return orderDAO.getOrdersByCustomerId(customerId);
     }
-    
-    /**
-     * Update order status
-     * @param orderId ID of the order
-     * @param status New status value
-     * @return true if successful, false otherwise
-     */
+
     public boolean updateOrderStatus(int orderId, String status) {
         if (orderId <= 0 || status == null || status.trim().isEmpty()) {
             return false;
@@ -178,13 +131,7 @@ public class OrderService {
         
         return orderDAO.updateOrderStatus(orderId, status);
     }
-    
-    /**
-     * Update payment status
-     * @param orderId ID of the order
-     * @param status New payment status value
-     * @return true if successful, false otherwise
-     */
+
     public boolean updatePaymentStatus(int orderId, String status) {
         if (orderId <= 0 || status == null || status.trim().isEmpty()) {
             return false;
@@ -192,14 +139,7 @@ public class OrderService {
         
         return orderDAO.updatePaymentStatus(orderId, status);
     }
-    
-    /**
-     * Add an item to an order
-     * @param orderId ID of the order
-     * @param itemId ID of the item to add
-     * @param quantity Quantity to add
-     * @return true if successful, false otherwise
-     */
+
     public boolean addItemToOrder(int orderId, int itemId, double quantity) {
         if (orderId <= 0 || itemId <= 0 || quantity <= 0) {
             return false;
@@ -345,8 +285,32 @@ public class OrderService {
         return true;
     }
 
-    public List<Order> searchOrders(String searchTerm, String string, String paymentStatus) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchOrders'");
+    public List<Order> searchOrders(String searchTerm, String orderStatus, String paymentStatus) {
+        List<Order> allOrders;
+        
+        // Get all orders first
+        if (orderStatus != null && !orderStatus.isEmpty()) {
+            allOrders = orderDAO.getOrdersByStatus(orderStatus);
+        } else {
+            allOrders = orderDAO.getAllOrders();
+        }
+        
+        // Filter by payment status if specified
+        if (paymentStatus != null && !paymentStatus.isEmpty()) {
+            allOrders = allOrders.stream()
+                .filter(order -> order.getPaymentStatus().equalsIgnoreCase(paymentStatus))
+                .collect(Collectors.toList());
+        }
+        
+        // Filter by search term (customer name) if specified
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            allOrders = allOrders.stream()
+                .filter(order -> order.getCustomer() != null && 
+                        order.getCustomer().getFullName() != null && 
+                        order.getCustomer().getFullName().toLowerCase().contains(searchTerm.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        return allOrders;
     }
 }
