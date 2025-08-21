@@ -23,6 +23,24 @@
             padding: 48px 0 0;
             box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
             background-color: #343a40;
+            width: 200px;
+            transition: all 0.3s;
+        }
+        @media (max-width: 767.98px) {
+            .sidebar {
+                margin-left: -200px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            .main-content.sidebar-active {
+                margin-left: 220px !important;
+                width: calc(100% - 220px) !important;
+            }
         }
         .sidebar-sticky {
             position: relative;
@@ -47,8 +65,9 @@
             margin-right: 10px;
         }
         .main-content {
-            margin-left: 240px;
+            margin-left: 220px;
             padding: 20px;
+            width: calc(100% - 220px);
         }
         .card {
             margin-bottom: 20px;
@@ -141,8 +160,11 @@
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <!-- Navigation Bar - Hidden when printing -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top no-print">
+        <button id="sidebarToggle" class="btn btn-dark d-md-none mr-2 no-print">
+            <i class="fas fa-bars"></i>
+        </button>
         <a class="navbar-brand" href="${pageContext.request.contextPath}/dashboard">Pahana Educational Billing System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -292,17 +314,17 @@
                                     <c:forEach var="item" items="${order.orderItems}" varStatus="status">
                                         <tr>
                                             <td>${status.index + 1}</td>
-                                            <td>${item.itemName}</td>
-                                            <td><fmt:formatNumber value="${item.price}" type="currency" currencySymbol="Rs. "/></td>
+                                            <td>${item.item.itemName}</td>
+                                            <td><fmt:formatNumber value="${item.unitPrice}" type="currency" currencySymbol="Rs. "/></td>
                                             <td>${item.quantity}</td>
-                                            <td><fmt:formatNumber value="${item.subtotal}" type="currency" currencySymbol="Rs. "/></td>
+                                            <td><fmt:formatNumber value="${item.lineTotal}" type="currency" currencySymbol="Rs. "/></td>
                                         </tr>
                                     </c:forEach>
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <td colspan="4" class="text-right order-total">Total:</td>
-                                        <td class="order-total"><fmt:formatNumber value="${order.total}" type="currency" currencySymbol="Rs. "/></td>
+                                        <td class="order-total"><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="Rs. "/></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -349,17 +371,17 @@
                             <c:forEach var="item" items="${order.orderItems}" varStatus="status">
                                 <tr>
                                     <td style="text-align: left;">${status.index + 1}</td>
-                                    <td style="text-align: left;">${item.itemName}</td>
-                                    <td style="text-align: right;"><fmt:formatNumber value="${item.price}" type="currency" currencySymbol="Rs. "/></td>
+                                    <td style="text-align: left;">${item.item.itemName}</td>
+                                    <td style="text-align: right;"><fmt:formatNumber value="${item.unitPrice}" type="currency" currencySymbol="Rs. "/></td>
                                     <td style="text-align: right;">${item.quantity}</td>
-                                    <td style="text-align: right;"><fmt:formatNumber value="${item.subtotal}" type="currency" currencySymbol="Rs. "/></td>
+                                    <td style="text-align: right;"><fmt:formatNumber value="${item.lineTotal}" type="currency" currencySymbol="Rs. "/></td>
                                 </tr>
                             </c:forEach>
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="4" style="text-align: right;"><strong>Subtotal:</strong></td>
-                                <td style="text-align: right;"><fmt:formatNumber value="${order.total}" type="currency" currencySymbol="Rs. "/></td>
+                                <td style="text-align: right;"><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="Rs. "/></td>
                             </tr>
                             <tr>
                                 <td colspan="4" style="text-align: right;"><strong>Tax (0%):</strong></td>
@@ -367,7 +389,7 @@
                             </tr>
                             <tr>
                                 <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
-                                <td style="text-align: right;"><strong><fmt:formatNumber value="${order.total}" type="currency" currencySymbol="Rs. "/></strong></td>
+                                <td style="text-align: right;"><strong><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="Rs. "/></strong></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -391,5 +413,13 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#sidebarToggle').on('click', function() {
+                $('.sidebar').toggleClass('active');
+                $('.main-content').toggleClass('sidebar-active');
+            });
+        });
+    </script>
 </body>
 </html>

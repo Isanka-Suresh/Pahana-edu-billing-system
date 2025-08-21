@@ -23,6 +23,7 @@
             padding: 48px 0 0;
             box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
             background-color: #343a40;
+            width: 200px;
         }
         .sidebar-sticky {
             position: relative;
@@ -47,8 +48,9 @@
             margin-right: 10px;
         }
         .main-content {
-            margin-left: 240px;
+            margin-left: 220px;
             padding: 20px;
+            width: calc(100% - 220px);
         }
         .search-box {
             margin-bottom: 20px;

@@ -22,6 +22,24 @@
             padding: 48px 0 0;
             box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
             background-color: #343a40;
+            width: 200px;
+            transition: all 0.3s;
+        }
+        @media (max-width: 767.98px) {
+            .sidebar {
+                margin-left: -200px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            .main-content.sidebar-active {
+                margin-left: 220px !important;
+                width: calc(100% - 220px) !important;
+            }
         }
         .sidebar-sticky {
             position: relative;
@@ -96,8 +114,9 @@
             color: #FFF;
         }
         .main-content {
-            margin-left: 240px;
+            margin-left: 220px;
             padding: 20px;
+            width: calc(100% - 220px);
         }
         .welcome-section {
             background-color: #fff;
@@ -111,6 +130,9 @@
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <button id="sidebarToggle" class="btn btn-dark d-md-none mr-2">
+            <i class="fas fa-bars"></i>
+        </button>
         <a class="navbar-brand" href="${pageContext.request.contextPath}/dashboard">Pahana Educational Billing System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -251,5 +273,13 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#sidebarToggle').on('click', function() {
+                $('.sidebar').toggleClass('active');
+                $('.main-content').toggleClass('sidebar-active');
+            });
+        });
+    </script>
 </body>
 </html>
