@@ -233,11 +233,11 @@
                             <div class="col-md-6 text-right">
                                 <div class="invoice-title">INVOICE</div>
                                 <div class="invoice-details">
-                                    <div><span class="invoice-details-title">Invoice Number:</span> INV-${order.id}</div>
+                                    <div><span class="invoice-details-title">Invoice Number:</span> INV-${order.orderId}</div>
                                     <div><span class="invoice-details-title">Date:</span> <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd" /></div>
                                     <div>
                                         <span class="invoice-details-title">Payment Status:</span>
-                                        <span class="badge badge-${order.paymentStatus}">
+                                        <span class="badge badge-${order.paymentStatus == 'pending' ? 'pending' : order.paymentStatus == 'paid' ? 'paid' : 'refunded'}">
                                             ${order.paymentStatus.substring(0, 1).toUpperCase()}${order.paymentStatus.substring(1)}
                                         </span>
                                     </div>
@@ -251,10 +251,10 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h5>Bill To:</h5>
-                                <div><strong>${customer.name}</strong></div>
-                                <div>${customer.address}</div>
-                                <div>Tel: ${customer.phone}</div>
-                                <div>Email: ${customer.email}</div>
+                                <div><strong>${order.customer.fullName}</strong></div>
+                                <div>${order.customer.address}</div>
+                                <div>Tel: ${order.customer.phone}</div>
+                                <div>Email: ${order.customer.email}</div>
                             </div>
                         </div>
                     </div>
@@ -273,14 +273,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach var="orderItem" items="${orderItems}" varStatus="status">
+                                <c:forEach var="orderItem" items="${order.orderItems}" varStatus="status">
                                     <tr>
                                         <td>${status.index + 1}</td>
-                                        <td>${orderItem.itemName}</td>
-                                        <td>${orderItem.itemDescription}</td>
+                                        <td>${orderItem.item.itemName}</td>
+                                        <td>${orderItem.item.description}</td>
                                         <td class="text-right"><fmt:formatNumber value="${orderItem.unitPrice}" type="currency" currencySymbol="Rs. "/></td>
                                         <td class="text-right">${orderItem.quantity}</td>
-                                        <td class="text-right"><fmt:formatNumber value="${orderItem.unitPrice * orderItem.quantity}" type="currency" currencySymbol="Rs. "/></td>
+                                        <td class="text-right"><fmt:formatNumber value="${orderItem.lineTotal}" type="currency" currencySymbol="Rs. "/></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -303,22 +303,8 @@
                         <div class="col-md-6">
                             <table class="table table-total">
                                 <tr>
-                                    <td>Subtotal:</td>
-                                    <td class="text-right"><fmt:formatNumber value="${order.subtotal}" type="currency" currencySymbol="Rs. "/></td>
-                                </tr>
-                                <tr>
-                                    <td>Tax (${order.taxRate}%):</td>
-                                    <td class="text-right"><fmt:formatNumber value="${order.taxAmount}" type="currency" currencySymbol="Rs. "/></td>
-                                </tr>
-                                <c:if test="${order.discount > 0}">
-                                    <tr>
-                                        <td>Discount:</td>
-                                        <td class="text-right"><fmt:formatNumber value="${order.discount}" type="currency" currencySymbol="Rs. "/></td>
-                                    </tr>
-                                </c:if>
-                                <tr class="total-row">
                                     <td><strong>Total:</strong></td>
-                                    <td class="text-right"><strong><fmt:formatNumber value="${order.total}" type="currency" currencySymbol="Rs. "/></strong></td>
+                                    <td class="text-right"><strong><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="Rs. "/></strong></td>
                                 </tr>
                             </table>
                         </div>
@@ -329,7 +315,7 @@
                         <div class="col-md-12">
                             <div class="invoice-footer">
                                 <h5>Notes:</h5>
-                                <p>${order.notes != null ? order.notes : 'No notes available.'}</p>
+                                <p>Thank you for choosing Pahana Educational Institute.</p>
                                 <p class="text-center mt-4">Thank you for your business!</p>
                             </div>
                         </div>
@@ -340,12 +326,45 @@
                         <button onclick="window.print();" class="btn btn-primary">
                             <i class="fas fa-print"></i> Print Invoice
                         </button>
-                        <a href="${pageContext.request.contextPath}/bills/generate?orderId=${order.id}" class="btn btn-success">
+                        <a href="${pageContext.request.contextPath}/bills/generate?orderId=${order.orderId}" class="btn btn-success">
                             <i class="fas fa-file-pdf"></i> Download PDF
                         </a>
-                        <a href="${pageContext.request.contextPath}/orders/edit?orderId=${order.id}" class="btn btn-secondary">
+                        <a href="${pageContext.request.contextPath}/orders/edit?orderId=${order.orderId}" class="btn btn-secondary">
                             <i class="fas fa-edit"></i> Edit Order
                         </a>
+                        
+                        <!-- Payment Status Update Buttons -->
+                        <div class="mt-3 payment-status-buttons">
+                            <h5>Update Payment Status:</h5>
+                            <form action="${pageContext.request.contextPath}/bills/updatePaymentStatus" method="post" class="d-inline">
+                                <input type="hidden" name="orderId" value="${order.orderId}">
+                                <input type="hidden" name="status" value="pending">
+                                <button type="submit" class="btn btn-warning ${order.paymentStatus == 'pending' ? 'active' : ''}" ${order.paymentStatus == 'pending' ? 'disabled' : ''}>
+                                    <i class="fas fa-clock"></i> Mark as Pending
+                                </button>
+                            </form>
+                            <form action="${pageContext.request.contextPath}/bills/updatePaymentStatus" method="post" class="d-inline">
+                                <input type="hidden" name="orderId" value="${order.orderId}">
+                                <input type="hidden" name="status" value="paid">
+                                <button type="submit" class="btn btn-success ${order.paymentStatus == 'paid' ? 'active' : ''}" ${order.paymentStatus == 'paid' ? 'disabled' : ''}>
+                                    <i class="fas fa-check-circle"></i> Mark as Paid
+                                </button>
+                            </form>
+                            <form action="${pageContext.request.contextPath}/bills/updatePaymentStatus" method="post" class="d-inline">
+                                <input type="hidden" name="orderId" value="${order.orderId}">
+                                <input type="hidden" name="status" value="refunded">
+                                <button type="submit" class="btn btn-danger ${order.paymentStatus == 'refunded' ? 'active' : ''}" ${order.paymentStatus == 'refunded' ? 'disabled' : ''}>
+                                    <i class="fas fa-undo"></i> Mark as Refunded
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Status Update Message -->
+                        <c:if test="${param.statusUpdated == 'true'}">
+                            <div class="alert alert-success mt-3">
+                                Payment status has been updated successfully.
+                            </div>
+                        </c:if>
                     </div>
                 </div>
             </main>
