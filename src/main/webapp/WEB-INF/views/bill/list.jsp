@@ -182,11 +182,11 @@
                             <c:forEach var="bill" items="${bills}">
                                 <tr>
                                     <td>INV-${bill.orderId}</td>
-                                    <td>${bill.customerName}</td>
+                                    <td>${bill.customer.fullName}</td>
                                     <td><fmt:formatDate value="${bill.orderDate}" pattern="yyyy-MM-dd" /></td>
-                                    <td><fmt:formatNumber value="${bill.total}" type="currency" currencySymbol="Rs. "/></td>
+                                    <td><fmt:formatNumber value="${bill.totalAmount}" type="currency" currencySymbol="Rs. "/></td>
                                     <td>
-                                        <span class="badge badge-${bill.paymentStatus}">
+                                        <span class="badge badge-${bill.paymentStatus == 'pending' ? 'pending' : bill.paymentStatus == 'paid' ? 'paid' : 'refunded'}">
                                             ${bill.paymentStatus.substring(0, 1).toUpperCase()}${bill.paymentStatus.substring(1)}
                                         </span>
                                     </td>

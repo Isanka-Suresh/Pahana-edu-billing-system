@@ -50,6 +50,9 @@ public class BillServlet extends HttpServlet {
         if (pathInfo != null && pathInfo.equals("/search")) {
             // Search bills
             searchBills(request, response);
+        } else if (pathInfo != null && pathInfo.equals("/updatePaymentStatus")) {
+            // Update payment status
+            updatePaymentStatus(request, response);
         } else {
             // Invalid path, redirect to bills list
             response.sendRedirect(request.getContextPath() + "/bills");
@@ -141,5 +144,33 @@ public class BillServlet extends HttpServlet {
         request.setAttribute("searchTerm", searchTerm);
         request.setAttribute("selectedPaymentStatus", paymentStatus);
         request.getRequestDispatcher("/WEB-INF/views/bill/list.jsp").forward(request, response);
+    }
+
+    private void updatePaymentStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String orderIdStr = request.getParameter("orderId");
+        String status = request.getParameter("status");
+        
+        if (orderIdStr != null && !orderIdStr.trim().isEmpty() && status != null && !status.trim().isEmpty()) {
+            try {
+                int orderId = Integer.parseInt(orderIdStr);
+                
+                // Validate status value
+                if (status.equals("pending") || status.equals("paid") || status.equals("refunded")) {
+                    // Update payment status
+                    boolean success = orderService.updatePaymentStatus(orderId, status);
+                    
+                    if (success) {
+                        // Redirect back to bill view
+                        response.sendRedirect(request.getContextPath() + "/bills/view?orderId=" + orderId + "&statusUpdated=true");
+                        return;
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Invalid order ID format
+            }
+        }
+        
+        // If we get here, there was an error
+        response.sendRedirect(request.getContextPath() + "/bills?error=true");
     }
 }

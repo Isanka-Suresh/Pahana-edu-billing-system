@@ -79,6 +79,7 @@ public class CustomerDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Customer customer = new Customer();
+                    customer.setCustomerId(rs.getInt("customer_id"));
                     customer.setAccountNumber(rs.getString("account_number"));
                     customer.setFullName(rs.getString("full_name"));
                     customer.setAddress(rs.getString("address"));
@@ -104,6 +105,7 @@ public class CustomerDAO {
             
             while (rs.next()) {
                 Customer customer = new Customer();
+                customer.setCustomerId(rs.getInt("customer_id"));
                 customer.setAccountNumber(rs.getString("account_number"));
                 customer.setFullName(rs.getString("full_name"));
                 customer.setAddress(rs.getString("address"));
@@ -130,6 +132,7 @@ public class CustomerDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Customer customer = new Customer();
+                    customer.setCustomerId(rs.getInt("customer_id"));
                     customer.setAccountNumber(rs.getString("account_number"));
                     customer.setFullName(rs.getString("full_name"));
                     customer.setAddress(rs.getString("address"));
@@ -156,8 +159,9 @@ public class CustomerDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Customer customer = new Customer();
-                    customer.setAccountNumber(rs.getString("account_no"));
-                    customer.setFullName(rs.getString("name"));
+                    customer.setCustomerId(rs.getInt("customer_id"));
+                    customer.setAccountNumber(rs.getString("account_number"));
+                    customer.setFullName(rs.getString("full_name"));
                     customer.setAddress(rs.getString("address"));
                     customer.setPhone(rs.getString("phone"));
                     customer.setEmail(rs.getString("email"));

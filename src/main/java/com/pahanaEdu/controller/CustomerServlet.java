@@ -94,7 +94,6 @@ public class CustomerServlet extends HttpServlet {
         String address = request.getParameter("address");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
-        String unitsStr = request.getParameter("unitsConsumed");
         
         // Validate input
         if (accountNumber == null || accountNumber.trim().isEmpty() ||
@@ -103,23 +102,7 @@ public class CustomerServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/customer/add.jsp").forward(request, response);
             return;
         }
-        
-        // Parse units consumed
-//        int unitsConsumed = 0;
-//        try {
-//            if (unitsStr != null && !unitsStr.trim().isEmpty()) {
-//                unitsConsumed = Integer.parseInt(unitsStr);
-//                if (unitsConsumed < 0) {
-//                    request.setAttribute("errorMessage", "Units consumed must be a non-negative number");
-//                    request.getRequestDispatcher("/WEB-INF/views/customer/add.jsp").forward(request, response);
-//                    return;
-//                }
-//            }
-//        } catch (NumberFormatException e) {
-//            request.setAttribute("errorMessage", "Units consumed must be a valid number");
-//            request.getRequestDispatcher("/WEB-INF/views/customer/add.jsp").forward(request, response);
-//            return;
-//        }
+
         
         // Create customer object
         Customer customer = new Customer();
@@ -177,6 +160,7 @@ public class CustomerServlet extends HttpServlet {
         customer.setFullName(fullName);
         customer.setAddress(address != null ? address : "");
         customer.setPhone(phone != null ? phone : "");
+        customer.setEmail(email != null ? email : "");
         
         // Update customer
         if (customerService.updateCustomer(customer)) {
