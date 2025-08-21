@@ -116,8 +116,6 @@
                         <i class="fas fa-user"></i> ${sessionScope.username}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/profile"><i class="fas fa-user-circle"></i> Profile</a>
-                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </li>
@@ -230,22 +228,9 @@
                                 </div>
                             </div>
                             
-                            <div class="faq-item">
-                                <div class="faq-question">How do I change my password?</div>
-                                <div class="faq-answer">
-                                    Click on your username in the top-right corner of the screen, select "Profile" from the dropdown menu, 
-                                    and then click on "Change Password". Follow the instructions to set a new password.
-                                </div>
-                            </div>
                             
-                            <div class="faq-item">
-                                <div class="faq-question">What should I do if I forget my password?</div>
-                                <div class="faq-answer">
-                                    If you forget your password, click on the "Forgot Password" link on the login page. 
-                                    You will be prompted to enter your email address, and instructions for resetting your password 
-                                    will be sent to that email. If you don't receive the email, please contact your system administrator.
-                                </div>
-                            </div>
+                            
+                            
                             
                             <div class="faq-item">
                                 <div class="faq-question">How do I navigate the system?</div>
